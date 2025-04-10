@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
+  <url>
+    <loc>https://bible-os.com/</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/bible</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/study</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/community</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/profile</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Help Pages -->
+  <url>
+    <loc>https://bible-os.com/help</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/help/getting-started</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/help/bible-reading</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/help/study-tools</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/help/community</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <!-- Community Pages -->
+  <url>
+    <loc>https://bible-os.com/community/guidelines</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Profile Pages -->
+  <url>
+    <loc>https://bible-os.com/profile/edit</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  
+  <!-- Bible Books (Examples) -->
+  <url>
+    <loc>https://bible-os.com/bible/Genesis</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/bible/Exodus</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/bible/Matthew</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/bible/John</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://bible-os.com/bible/Revelation</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>

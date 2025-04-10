@@ -1,0 +1,16 @@
+# robots.txt for Bible Operating System (BOS)
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow crawling of authentication pages
+Disallow: /api/
+Disallow: /auth/
+Disallow: /profile/edit
+Disallow: /profile/privacy
+Disallow: /profile/notifications
+Disallow: /moderation/
+
+# Sitemap location
+Sitemap: https://bible-os.com/sitemap.xml
