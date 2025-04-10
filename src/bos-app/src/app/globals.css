@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --base-font-size: 16px;
 }
 
 @theme inline {
@@ -23,4 +24,150 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: var(--base-font-size);
+}
+
+/* High contrast mode styles */
+.high-contrast {
+  --high-contrast-text: #ffffff;
+  --high-contrast-bg: #000000;
+  --high-contrast-primary: #ffff00;
+  --high-contrast-secondary: #00ffff;
+  --high-contrast-border: #ffffff;
+}
+
+.high-contrast.dark {
+  --high-contrast-text: #ffffff;
+  --high-contrast-bg: #000000;
+  --high-contrast-primary: #ffff00;
+  --high-contrast-secondary: #00ffff;
+  --high-contrast-border: #ffffff;
+}
+
+.high-contrast {
+  color: var(--high-contrast-text) !important;
+  background-color: var(--high-contrast-bg) !important;
+}
+
+.high-contrast a {
+  color: var(--high-contrast-primary) !important;
+  text-decoration: underline !important;
+}
+
+.high-contrast button:not([disabled]),
+.high-contrast .btn:not([disabled]) {
+  background-color: var(--high-contrast-bg) !important;
+  color: var(--high-contrast-primary) !important;
+  border: 2px solid var(--high-contrast-primary) !important;
+  font-weight: bold !important;
+}
+
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  background-color: var(--high-contrast-bg) !important;
+  color: var(--high-contrast-text) !important;
+  border: 2px solid var(--high-contrast-border) !important;
+}
+
+.high-contrast header,
+.high-contrast footer {
+  background-color: var(--high-contrast-bg) !important;
+  border-top: 2px solid var(--high-contrast-border) !important;
+  border-bottom: 2px solid var(--high-contrast-border) !important;
+}
+
+.high-contrast nav a {
+  color: var(--high-contrast-secondary) !important;
+}
+
+.high-contrast nav a[aria-current="page"] {
+  color: var(--high-contrast-primary) !important;
+  font-weight: bold !important;
+  text-decoration: underline !important;
+}
+
+/* Reduced motion styles */
+.reduce-motion * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Focus styles for better accessibility */
+*:focus-visible {
+  outline: 3px solid #4299e1 !important;
+  outline-offset: 2px !important;
+}
+
+.dark *:focus-visible {
+  outline: 3px solid #90cdf4 !important;
+}
+
+.high-contrast *:focus-visible {
+  outline: 3px solid var(--high-contrast-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* Skip to content link styles */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only.focus\:not-sr-only:focus {
+  position: fixed;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  z-index: 9999;
+}
+
+/* Responsive font sizes */
+@media (max-width: 640px) {
+  :root {
+    --base-font-size: 14px;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --base-font-size: 18px;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  header, footer, nav, button, .no-print {
+    display: none !important;
+  }
+
+  main {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: none !important;
+  }
+
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
 }
