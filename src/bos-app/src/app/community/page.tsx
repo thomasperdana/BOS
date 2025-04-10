@@ -1,13 +1,15 @@
 import React from 'react';
 import MainLayout from '../../components/layout/MainLayout';
 import Button from '../../components/ui/Button';
+import { AuthProvider } from '../../context/AuthContext';
 
 export default function CommunityPage() {
   return (
-    <MainLayout>
+    <AuthProvider>
+      <MainLayout>
       <div className="max-w-4xl mx-auto py-8">
         <h1 className="text-3xl font-bold mb-6">Community</h1>
-        
+
         <div className="bg-white p-6 rounded-lg shadow-md mb-8">
           <h2 className="text-xl font-semibold mb-3">Facebook Integration</h2>
           <p className="text-gray-600 mb-4">
@@ -18,7 +20,7 @@ export default function CommunityPage() {
             <Button variant="outline">View Connected Groups</Button>
           </div>
         </div>
-        
+
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-3">Discussion Forums</h2>
@@ -41,7 +43,7 @@ export default function CommunityPage() {
             </div>
             <Button variant="secondary">View All Forums</Button>
           </div>
-          
+
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-3">Study Groups</h2>
             <p className="text-gray-600 mb-4">
@@ -64,7 +66,7 @@ export default function CommunityPage() {
             <Button variant="secondary">View All Groups</Button>
           </div>
         </div>
-        
+
         <div className="bg-blue-50 p-6 rounded-lg">
           <h2 className="text-xl font-semibold mb-3">Community Guidelines</h2>
           <p className="text-gray-700 mb-4">
@@ -74,5 +76,6 @@ export default function CommunityPage() {
         </div>
       </div>
     </MainLayout>
+    </AuthProvider>
   );
 }

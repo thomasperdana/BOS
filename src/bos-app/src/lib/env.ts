@@ -15,11 +15,11 @@ export const getEnv = (
   required = true
 ): string => {
   const value = process.env[key] || defaultValue;
-  
+
   if (required && !value) {
     throw new Error(`Environment variable ${key} is required but not set`);
   }
-  
+
   return value || '';
 };
 
@@ -46,9 +46,13 @@ export const env = {
   // Facebook
   facebookAppId: getClientEnv('FACEBOOK_APP_ID', '', false),
   facebookGroupId: getClientEnv('FACEBOOK_GROUP_ID', '', false),
-  
+
   // AI Services
   geminiApiKey: getClientEnv('GEMINI_API_KEY', '', false),
   openrouterApiKey: getClientEnv('OPENROUTER_API_KEY', '', false),
   openrouterBaseUrl: getClientEnv('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1', false),
+
+  // Puter.js
+  puterAppId: getClientEnv('PUTER_APP_ID', 'bos-app', false),
+  puterApiKey: getClientEnv('PUTER_API_KEY', '', false),
 };

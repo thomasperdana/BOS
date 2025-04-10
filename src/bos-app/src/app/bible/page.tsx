@@ -1,15 +1,18 @@
 import React from 'react';
 import MainLayout from '../../components/layout/MainLayout';
 import Button from '../../components/ui/Button';
+import { AuthProvider } from '../../context/AuthContext';
 import { BibleProvider } from '../../context/BibleContext';
 import BibleReader from '../../components/bible/BibleReader';
 import BibleSearch from '../../components/bible/BibleSearch';
 import BibleBookmarks from '../../components/bible/BibleBookmarks';
+import Link from 'next/link';
 
 export default function BiblePage() {
   return (
-    <BibleProvider>
-      <MainLayout>
+    <AuthProvider>
+      <BibleProvider>
+        <MainLayout>
         <div className="max-w-6xl mx-auto py-8 px-4">
           <h1 className="text-3xl font-bold mb-6">King James Bible</h1>
 
@@ -37,7 +40,9 @@ export default function BiblePage() {
                   Use our AI-powered study tools to gain deeper insights into the scripture.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Button variant="primary" size="sm">Analyze Passage</Button>
+                  <Link href="/study">
+                    <Button variant="primary" size="sm">AI Bible Study</Button>
+                  </Link>
                   <Button variant="secondary" size="sm">Cross References</Button>
                   <Button variant="outline" size="sm">Share</Button>
                 </div>
@@ -58,6 +63,7 @@ export default function BiblePage() {
           </div>
         </div>
       </MainLayout>
-    </BibleProvider>
+      </BibleProvider>
+    </AuthProvider>
   );
 }

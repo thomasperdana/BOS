@@ -1,77 +1,57 @@
 import React from 'react';
 import MainLayout from '../../components/layout/MainLayout';
 import Button from '../../components/ui/Button';
+import { AuthProvider } from '../../context/AuthContext';
+import { BibleProvider } from '../../context/BibleContext';
+import VerseAnalysis from '../../components/ai/VerseAnalysis';
+import ThematicExploration from '../../components/ai/ThematicExploration';
+import ContextualInsights from '../../components/ai/ContextualInsights';
+import ContentVerification from '../../components/ai/ContentVerification';
 
 export default function StudyPage() {
   return (
-    <MainLayout>
-      <div className="max-w-4xl mx-auto py-8">
-        <h1 className="text-3xl font-bold mb-6">Bible Study Tools</h1>
-        
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-3">AI-Powered Analysis</h2>
-            <p className="text-gray-600 mb-4">
-              Get AI-generated insights and analysis for any Bible passage, verified for biblical accuracy.
-            </p>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Enter Bible Reference
-              </label>
-              <input 
-                type="text" 
-                placeholder="e.g., John 3:16" 
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
+    <AuthProvider>
+      <BibleProvider>
+        <MainLayout>
+          <div className="max-w-6xl mx-auto py-8">
+            <h1 className="text-3xl font-bold mb-6 dark:text-white">Bible Study Tools</h1>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <VerseAnalysis />
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <ThematicExploration />
+              </div>
             </div>
-            <Button variant="primary">Analyze Passage</Button>
-          </div>
-          
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-3">Thematic Study</h2>
-            <p className="text-gray-600 mb-4">
-              Explore biblical themes and topics with AI-assisted research.
-            </p>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Enter Theme or Topic
-              </label>
-              <input 
-                type="text" 
-                placeholder="e.g., Faith, Love, Salvation" 
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <ContextualInsights />
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <ContentVerification />
+              </div>
             </div>
-            <Button variant="primary">Explore Theme</Button>
-          </div>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-          <h2 className="text-xl font-semibold mb-3">Recent Studies</h2>
-          <div className="space-y-3">
-            <div className="p-3 border border-gray-200 rounded-md hover:bg-gray-50">
-              <h3 className="font-medium">John 3:16-21</h3>
-              <p className="text-sm text-gray-600">Analysis of God's love and salvation</p>
-            </div>
-            <div className="p-3 border border-gray-200 rounded-md hover:bg-gray-50">
-              <h3 className="font-medium">Psalm 23</h3>
-              <p className="text-sm text-gray-600">The Lord as our shepherd</p>
-            </div>
-            <div className="p-3 border border-gray-200 rounded-md hover:bg-gray-50">
-              <h3 className="font-medium">Faith in the Bible</h3>
-              <p className="text-sm text-gray-600">Thematic study on faith</p>
+
+            <div className="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+              <h2 className="text-xl font-semibold mb-3 dark:text-white">AI-Powered Bible Study</h2>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                Our AI-powered Bible study tools use advanced technology to help you gain deeper insights into the scriptures. All content is verified for biblical accuracy by cross-referencing with the King James Version Bible.
+              </p>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                <strong>Sign in</strong> to access these powerful tools and enhance your Bible study experience.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Button variant="primary" size="md">Learn More About Our AI Technology</Button>
+                <Button variant="secondary" size="md">View Our Verification Process</Button>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="bg-blue-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-3">Content Verification</h2>
-          <p className="text-gray-700 mb-4">
-            All AI-generated content is verified for biblical accuracy by cross-referencing with the King James Version Bible.
-          </p>
-          <Button variant="secondary">Learn More About Our Verification Process</Button>
-        </div>
-      </div>
-    </MainLayout>
+        </MainLayout>
+      </BibleProvider>
+    </AuthProvider>
   );
 }

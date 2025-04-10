@@ -1,10 +1,13 @@
 import Image from "next/image";
 import MainLayout from "../components/layout/MainLayout";
 import Button from "../components/ui/Button";
+import { AuthProvider } from "../context/AuthContext";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <MainLayout>
+    <AuthProvider>
+      <MainLayout>
       <div className="max-w-4xl mx-auto py-8">
         <section className="mb-12 text-center">
           <h1 className="text-4xl font-bold mb-4">Bible Operating System</h1>
@@ -12,12 +15,16 @@ export default function Home() {
             A comprehensive web application for Evangelical Christians to engage with the King James Version of the Bible
           </p>
           <div className="flex gap-4 justify-center">
-            <Button variant="primary" size="lg">
-              Start Reading
-            </Button>
-            <Button variant="outline" size="lg">
-              Learn More
-            </Button>
+            <Link href="/bible">
+              <Button variant="primary" size="lg">
+                Start Reading
+              </Button>
+            </Link>
+            <Link href="/study">
+              <Button variant="outline" size="lg">
+                AI Bible Study
+              </Button>
+            </Link>
           </div>
         </section>
 
@@ -27,9 +34,11 @@ export default function Home() {
             <p className="text-gray-600 mb-4">
               Access the King James Bible with an intuitive reading interface
             </p>
-            <Button variant="secondary" size="sm">
-              Open Bible
-            </Button>
+            <Link href="/bible">
+              <Button variant="secondary" size="sm">
+                Open Bible
+              </Button>
+            </Link>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -37,9 +46,11 @@ export default function Home() {
             <p className="text-gray-600 mb-4">
               Enhanced Bible study experience with AI tools and verification
             </p>
-            <Button variant="secondary" size="sm">
-              Study Tools
-            </Button>
+            <Link href="/study">
+              <Button variant="secondary" size="sm">
+                Study Tools
+              </Button>
+            </Link>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -47,9 +58,11 @@ export default function Home() {
             <p className="text-gray-600 mb-4">
               Connect with Facebook groups and other believers
             </p>
-            <Button variant="secondary" size="sm">
-              Join Community
-            </Button>
+            <Link href="/community">
+              <Button variant="secondary" size="sm">
+                Join Community
+              </Button>
+            </Link>
           </div>
         </section>
 
@@ -64,5 +77,6 @@ export default function Home() {
         </section>
       </div>
     </MainLayout>
+    </AuthProvider>
   );
 }
