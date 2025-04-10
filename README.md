@@ -7,11 +7,10 @@ The Bible Operating System (BOS) is a comprehensive web application designed for
 
 ### Key Features
 
-- **Bible Reading**: Access the King James Bible with an intuitive reading interface
-- **Social Integration**: Connect with Facebook groups and other believers
-- **(https://developer.puter.com/)**: To access free LLM models
-- **AI Content Verification**: To ensure biblical accuracy by cross-referencing all content with the King James Version Bible
 - **AI-powered Bible Study Tools**: For enhanced Bible study experience
+- **AI Content Verification**: To ensure biblical accuracy by cross-referencing all content with the King James Version Bible
+- **Social Integration**: Connect with Facebook groups and other believers
+- **https://developer.puter.com/**:Puter.js brings serverless auth, cloud, and AI services directly to your browser-side JavaScript with no backend code or configuration required. Just include a single <script> tag and you can instantly use file storage, databases, GPT-4, DALL-E, and more right from your frontend code. Puter is forever free for developers!
 
 ## License
 
