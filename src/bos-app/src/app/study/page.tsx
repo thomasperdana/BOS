@@ -1,16 +1,18 @@
+"use client";
+
 import React from 'react';
 import MainLayout from '../../components/layout/MainLayout';
 import Button from '../../components/ui/Button';
-import { AuthProvider } from '../../context/AuthContext';
 import { BibleProvider } from '../../context/BibleContext';
 import VerseAnalysis from '../../components/ai/VerseAnalysis';
 import ThematicExploration from '../../components/ai/ThematicExploration';
 import ContextualInsights from '../../components/ai/ContextualInsights';
 import ContentVerification from '../../components/ai/ContentVerification';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function StudyPage() {
   return (
-    <AuthProvider>
+    <ProtectedRoute>
       <BibleProvider>
         <MainLayout>
           <div className="max-w-6xl mx-auto py-8">
@@ -42,7 +44,7 @@ export default function StudyPage() {
                 Our AI-powered Bible study tools use advanced technology to help you gain deeper insights into the scriptures. All content is verified for biblical accuracy by cross-referencing with the King James Version Bible.
               </p>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                <strong>Sign in</strong> to access these powerful tools and enhance your Bible study experience.
+                You are now signed in and can access all of our powerful tools to enhance your Bible study experience.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button variant="primary" size="md">Learn More About Our AI Technology</Button>
@@ -52,6 +54,6 @@ export default function StudyPage() {
           </div>
         </MainLayout>
       </BibleProvider>
-    </AuthProvider>
+    </ProtectedRoute>
   );
 }

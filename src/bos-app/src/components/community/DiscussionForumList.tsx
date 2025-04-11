@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
@@ -7,23 +9,23 @@ import { DiscussionForum } from '../../lib/types';
 
 const DiscussionForumList: React.FC = () => {
   const { user, isAuthenticated, isModerator } = useAuth();
-  
+
   const [forums, setForums] = useState<DiscussionForum[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  
+
   // Load forums when component mounts
   useEffect(() => {
     const loadForums = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         // In a real app, we would fetch forums from a database
         // For now, we'll use Puter.js storage
         const savedForums = await puterStorage.loadData('community:forums');
-        
+
         if (savedForums) {
           setForums(savedForums);
         } else {
@@ -80,7 +82,7 @@ const DiscussionForumList: React.FC = () => {
               isPrivate: false
             }
           ];
-          
+
           await puterStorage.saveData('community:forums', defaultForums);
           setForums(defaultForums);
         }
@@ -91,15 +93,15 @@ const DiscussionForumList: React.FC = () => {
         setIsLoading(false);
       }
     };
-    
+
     loadForums();
   }, []);
-  
+
   // Filter forums by category
   const filteredForums = selectedCategory === 'all'
     ? forums
     : forums.filter(forum => forum.category === selectedCategory);
-  
+
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -109,41 +111,41 @@ const DiscussionForumList: React.FC = () => {
       day: 'numeric'
     });
   };
-  
+
   // Get topic count for a forum
   const getTopicCount = (forum: DiscussionForum) => {
     return forum.topics.length;
   };
-  
+
   // Get latest activity date for a forum
   const getLatestActivity = (forum: DiscussionForum) => {
     if (forum.topics.length === 0) {
       return forum.createdAt;
     }
-    
+
     // Find the most recent post in any topic
     let latestDate = forum.createdAt;
-    
+
     forum.topics.forEach(topic => {
       if (topic.updatedAt > latestDate) {
         latestDate = topic.updatedAt;
       }
-      
+
       topic.posts.forEach(post => {
         if (post.createdAt > latestDate) {
           latestDate = post.createdAt;
         }
       });
     });
-    
+
     return latestDate;
   };
-  
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold dark:text-white">Discussion Forums</h2>
-        
+
         {isAuthenticated && isModerator() && (
           <Link href="/community/forums/new">
             <Button variant="primary" size="sm">
@@ -152,13 +154,13 @@ const DiscussionForumList: React.FC = () => {
           </Link>
         )}
       </div>
-      
+
       {error && (
         <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-md">
           {error}
         </div>
       )}
-      
+
       <div className="mb-4">
         <label htmlFor="category-filter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Filter by Category
@@ -177,7 +179,7 @@ const DiscussionForumList: React.FC = () => {
           <option value="general">General</option>
         </select>
       </div>
-      
+
       {isLoading ? (
         <div className="text-center py-8">
           <p className="text-gray-600 dark:text-gray-400">Loading forums...</p>
@@ -234,7 +236,7 @@ const DiscussionForumList: React.FC = () => {
           </table>
         </div>
       )}
-      
+
       <div className="mt-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-md">
         <h3 className="text-md font-medium mb-2 dark:text-white">Community Guidelines</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">

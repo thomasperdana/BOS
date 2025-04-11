@@ -1,13 +1,18 @@
+"use client";
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { SessionProvider, useSession } from 'next-auth/react';
 import { auth as puterAuth, storage as puterStorage } from '../lib/puter';
+import { auth as nextAuth } from '../lib/nextauth';
 import { UserProfile } from '../lib/types';
 
-// Basic user info from Puter auth
+// Basic user info from auth providers
 interface User {
   id: string;
   name: string;
   email: string;
   avatar?: string;
+  provider: 'puter' | 'facebook' | 'google';
 }
 
 // Extended user profile with additional information
@@ -24,6 +29,8 @@ interface AuthContextType {
   error: string | null;
   isAuthenticated: boolean;
   signIn: () => Promise<boolean>;
+  signInWithFacebook: () => Promise<boolean>;
+  signInWithGoogle: () => Promise<boolean>;
   signOut: () => Promise<boolean>;
   syncUserData: () => Promise<boolean>;
   updateProfile: (updates: Partial<ExtendedUserProfile>) => Promise<boolean>;
@@ -38,11 +45,24 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+// Wrapper component that provides both NextAuth and our custom AuthContext
+export const AuthProviders: React.FC<AuthProviderProps> = ({ children }) => {
+  return (
+    <SessionProvider>
+      <AuthContextProvider>{children}</AuthContextProvider>
+    </SessionProvider>
+  );
+};
+
+// The actual AuthContext provider
+export const AuthContextProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<ExtendedUserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Get NextAuth session
+  const { data: session, status } = useSession();
 
   // Check if user is already authenticated on initial render
   useEffect(() => {
@@ -51,18 +71,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
 
       try {
-        const isSignedIn = puterAuth.isSignedIn();
+        // First check NextAuth session
+        if (session && session.user) {
+          setUser({
+            id: session.user.id,
+            name: session.user.name || 'User',
+            email: session.user.email || '',
+            avatar: session.user.image || undefined,
+            provider: session.user.provider as 'facebook' | 'google',
+          });
 
-        if (isSignedIn) {
-          const currentUser = puterAuth.getCurrentUser();
+          // Load user data from cloud storage
+          await syncUserData();
+        } else {
+          // If no NextAuth session, check Puter auth
+          const isSignedIn = await puterAuth.isSignedIn();
 
-          if (currentUser) {
-            setUser({
-              id: currentUser.id,
-              name: currentUser.name || 'User',
-              email: currentUser.email || '',
-              avatar: currentUser.avatar,
-            });
+          if (isSignedIn) {
+            const currentUser = await puterAuth.getCurrentUser();
+
+            if (currentUser) {
+              setUser({
+                id: currentUser.id,
+                name: currentUser.name || 'User',
+                email: currentUser.email || '',
+                avatar: currentUser.avatar,
+                provider: 'puter',
+              });
+
+              // Load user data from cloud storage
+              await syncUserData();
+            }
           }
         }
       } catch (err) {
@@ -74,7 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkAuth();
-  }, []);
+  }, [session]);
 
   // Sign in with Puter
   const signIn = async (): Promise<boolean> => {
@@ -90,6 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           name: puterUser.name || 'User',
           email: puterUser.email || '',
           avatar: puterUser.avatar,
+          provider: 'puter',
         });
 
         // Load user data from cloud storage
@@ -109,21 +149,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Sign in with Facebook
+  const signInWithFacebook = async (): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const success = await nextAuth.signInWithFacebook();
+      if (!success) {
+        setError('Facebook sign in failed');
+      }
+      return success;
+    } catch (err) {
+      setError(`Facebook sign in failed: ${err instanceof Error ? err.message : String(err)}`);
+      console.error('Facebook sign in error:', err);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Sign in with Google
+  const signInWithGoogle = async (): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const success = await nextAuth.signInWithGoogle();
+      if (!success) {
+        setError('Google sign in failed');
+      }
+      return success;
+    } catch (err) {
+      setError(`Google sign in failed: ${err instanceof Error ? err.message : String(err)}`);
+      console.error('Google sign in error:', err);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Sign out
   const signOut = async (): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const success = await puterAuth.signOut();
-
-      if (success) {
-        setUser(null);
-        return true;
-      } else {
-        setError('Sign out failed');
-        return false;
+      if (user) {
+        if (user.provider === 'puter') {
+          const success = await puterAuth.signOut();
+          if (!success) {
+            setError('Puter sign out failed');
+            return false;
+          }
+        } else {
+          // For Facebook and Google, use NextAuth signOut
+          await nextAuth.signOut();
+        }
       }
+
+      setUser(null);
+      setProfile(null);
+      return true;
     } catch (err) {
       setError(`Sign out failed: ${err instanceof Error ? err.message : String(err)}`);
       console.error('Sign out error:', err);
@@ -241,6 +328,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     error,
     isAuthenticated: !!user,
     signIn,
+    signInWithFacebook,
+    signInWithGoogle,
     signOut,
     syncUserData,
     updateProfile,
@@ -263,5 +352,8 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+
+// For backward compatibility
+export const AuthProvider = AuthProviders;
 
 export default AuthContext;

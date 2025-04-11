@@ -1,3 +1,5 @@
+"use client";
+
 import { env } from './env';
 import { FacebookGroup } from './types';
 
@@ -13,13 +15,13 @@ export const initFacebook = (): Promise<void> => {
       reject(new Error('Facebook SDK can only be initialized in browser environment'));
       return;
     }
-    
+
     // Check if Facebook SDK is already loaded
     if ((window as any).FB) {
       resolve();
       return;
     }
-    
+
     // Load Facebook SDK
     (window as any).fbAsyncInit = function() {
       (window as any).FB.init({
@@ -28,10 +30,10 @@ export const initFacebook = (): Promise<void> => {
         xfbml: true,
         version: 'v18.0'
       });
-      
+
       resolve();
     };
-    
+
     // Load the SDK asynchronously
     (function(d, s, id) {
       var js, fjs = d.getElementsByTagName(s)[0];
@@ -51,7 +53,7 @@ export const checkLoginStatus = (): Promise<{ status: string; authResponse: any 
       reject(new Error('Facebook SDK not initialized'));
       return;
     }
-    
+
     (window as any).FB.getLoginStatus(function(response: any) {
       resolve(response);
     });
@@ -65,7 +67,7 @@ export const login = (): Promise<{ status: string; authResponse: any }> => {
       reject(new Error('Facebook SDK not initialized'));
       return;
     }
-    
+
     (window as any).FB.login(function(response: any) {
       if (response.authResponse) {
         resolve(response);
@@ -83,7 +85,7 @@ export const logout = (): Promise<void> => {
       reject(new Error('Facebook SDK not initialized'));
       return;
     }
-    
+
     (window as any).FB.logout(function(response: any) {
       resolve();
     });
@@ -97,13 +99,13 @@ export const getUserGroups = (): Promise<FacebookGroup[]> => {
       reject(new Error('Facebook SDK not initialized'));
       return;
     }
-    
+
     (window as any).FB.api('/me/groups', function(response: any) {
       if (response.error) {
         reject(new Error(response.error.message));
         return;
       }
-      
+
       const groups: FacebookGroup[] = response.data.map((group: any) => ({
         id: group.id,
         name: group.name,
@@ -116,7 +118,7 @@ export const getUserGroups = (): Promise<FacebookGroup[]> => {
           canReadFeed: true
         }
       }));
-      
+
       resolve(groups);
     });
   });
@@ -129,13 +131,13 @@ export const getGroupDetails = (groupId: string): Promise<any> => {
       reject(new Error('Facebook SDK not initialized'));
       return;
     }
-    
+
     (window as any).FB.api(`/${groupId}`, function(response: any) {
       if (response.error) {
         reject(new Error(response.error.message));
         return;
       }
-      
+
       resolve(response);
     });
   });
@@ -148,19 +150,19 @@ export const postToGroup = (groupId: string, message: string, link?: string): Pr
       reject(new Error('Facebook SDK not initialized'));
       return;
     }
-    
+
     const postData: any = { message };
-    
+
     if (link) {
       postData.link = link;
     }
-    
+
     (window as any).FB.api(`/${groupId}/feed`, 'POST', postData, function(response: any) {
       if (response.error) {
         reject(new Error(response.error.message));
         return;
       }
-      
+
       resolve(response);
     });
   });
@@ -174,7 +176,7 @@ export const shareBibleVerse = (
   notes?: string
 ): Promise<any> => {
   const message = `${reference}\n\n"${text}"\n\n${notes ? `${notes}\n\n` : ''}Shared via Bible Operating System`;
-  
+
   return postToGroup(groupId, message);
 };
 
@@ -187,7 +189,7 @@ export const shareBibleStudy = (
 ): Promise<any> => {
   const referencesText = references.length > 0 ? `References: ${references.join(', ')}\n\n` : '';
   const message = `${title}\n\n${content}\n\n${referencesText}Shared via Bible Operating System`;
-  
+
   return postToGroup(groupId, message);
 };
 

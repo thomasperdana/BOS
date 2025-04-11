@@ -55,4 +55,10 @@ export const env = {
   // Puter.js
   puterAppId: getClientEnv('PUTER_APP_ID', 'bos-app', false),
   puterApiKey: getClientEnv('PUTER_API_KEY', '', false),
+
+  // Feature Flags
+  enableFacebookIntegration: getClientEnv('ENABLE_FACEBOOK_INTEGRATION', 'false', false) === 'true',
+  enableGoogleIntegration: getClientEnv('ENABLE_GOOGLE_INTEGRATION', 'true', false) === 'true',
+  enableCommunityFeatures: getClientEnv('ENABLE_COMMUNITY_FEATURES', 'true', false) === 'true',
+  enableAiFeatures: getClientEnv('ENABLE_AI_FEATURES', 'true', false) === 'true',
 };

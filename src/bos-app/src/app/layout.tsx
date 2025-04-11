@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import GoogleAnalytics from "../components/analytics/GoogleAnalytics";
-import { initErrorTracking, reportWebVitals } from "../lib/monitoring";
-import { useEffect } from "react";
-import Script from "next/script";
+import ClientLayout from "../components/layout/ClientLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,40 +62,17 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://bible-os.com"),
 };
 
-export function reportWebVitalsCallback(metric: any) {
-  reportWebVitals(metric);
-}
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Initialize error tracking
-  useEffect(() => {
-    initErrorTracking();
-  }, []);
-
   return (
-    <html lang="en">
-      <GoogleAnalytics />
-      <Script
-        id="error-monitoring-init"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.onerror = function(message, source, lineno, colno, error) {
-              console.error('Global error:', message, error);
-              return false;
-            };
-          `,
-        }}
-      />
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClientLayout
+      geistSansVariable={geistSans.variable}
+      geistMonoVariable={geistMono.variable}
+    >
+      {children}
+    </ClientLayout>
   );
 }

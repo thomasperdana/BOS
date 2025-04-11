@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
@@ -6,7 +8,7 @@ import { useRouter } from 'next/navigation';
 const ProfileEdit: React.FC = () => {
   const { profile, updateProfile, isAuthenticated } = useAuth();
   const router = useRouter();
-  
+
   const [formData, setFormData] = useState({
     name: '',
     bio: '',
@@ -29,11 +31,11 @@ const ProfileEdit: React.FC = () => {
       studyGroupNotifications: true,
     },
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
+
   // Load profile data when component mounts
   useEffect(() => {
     if (profile) {
@@ -61,7 +63,7 @@ const ProfileEdit: React.FC = () => {
       });
     }
   }, [profile]);
-  
+
   if (!isAuthenticated || !profile) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -71,10 +73,10 @@ const ProfileEdit: React.FC = () => {
       </div>
     );
   }
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     if (name.includes('.')) {
       const [section, field] = name.split('.');
       setFormData(prev => ({
@@ -91,10 +93,10 @@ const ProfileEdit: React.FC = () => {
       }));
     }
   };
-  
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    
+
     if (name.includes('.')) {
       const [section, field] = name.split('.');
       setFormData(prev => ({
@@ -111,13 +113,13 @@ const ProfileEdit: React.FC = () => {
       }));
     }
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     setSuccessMessage(null);
-    
+
     try {
       const success = await updateProfile({
         ...profile,
@@ -128,15 +130,15 @@ const ProfileEdit: React.FC = () => {
         privacy: formData.privacy,
         preferences: formData.preferences,
       });
-      
+
       if (success) {
         setSuccessMessage('Profile updated successfully!');
-        
+
         // Apply dark mode immediately if changed
         if (formData.preferences.darkMode !== profile.preferences?.darkMode) {
           document.documentElement.classList.toggle('dark', formData.preferences.darkMode);
         }
-        
+
         // Apply font size immediately if changed
         if (formData.preferences.fontSize !== profile.preferences?.fontSize) {
           localStorage.setItem('bos-font-size', formData.preferences.fontSize.toString());
@@ -150,32 +152,32 @@ const ProfileEdit: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
+
   const handleCancel = () => {
     router.push('/profile');
   };
-  
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
       <h2 className="text-xl font-bold mb-6 dark:text-white">Edit Profile</h2>
-      
+
       {error && (
         <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-md">
           {error}
         </div>
       )}
-      
+
       {successMessage && (
         <div className="mb-4 p-3 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200 rounded-md">
           {successMessage}
         </div>
       )}
-      
+
       <form onSubmit={handleSubmit}>
         <div className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-medium dark:text-white">Basic Information</h3>
-            
+
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Name
@@ -190,7 +192,7 @@ const ProfileEdit: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div>
               <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Bio
@@ -204,7 +206,7 @@ const ProfileEdit: React.FC = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label htmlFor="denomination" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Denomination
@@ -230,10 +232,10 @@ const ProfileEdit: React.FC = () => {
               </select>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <h3 className="text-lg font-medium dark:text-white">Social Links</h3>
-            
+
             <div>
               <label htmlFor="socialLinks.facebook" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Facebook URL
@@ -247,7 +249,7 @@ const ProfileEdit: React.FC = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label htmlFor="socialLinks.twitter" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Twitter URL
@@ -261,7 +263,7 @@ const ProfileEdit: React.FC = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label htmlFor="socialLinks.instagram" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Instagram URL
@@ -275,7 +277,7 @@ const ProfileEdit: React.FC = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
               />
             </div>
-            
+
             <div>
               <label htmlFor="socialLinks.website" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Personal Website
@@ -290,10 +292,10 @@ const ProfileEdit: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <h3 className="text-lg font-medium dark:text-white">Privacy Settings</h3>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -307,7 +309,7 @@ const ProfileEdit: React.FC = () => {
                 Show my email address to other users
               </label>
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -321,7 +323,7 @@ const ProfileEdit: React.FC = () => {
                 Show my social media links to other users
               </label>
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -336,10 +338,10 @@ const ProfileEdit: React.FC = () => {
               </label>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <h3 className="text-lg font-medium dark:text-white">Preferences</h3>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -353,7 +355,7 @@ const ProfileEdit: React.FC = () => {
                 Use dark mode
               </label>
             </div>
-            
+
             <div>
               <label htmlFor="preferences.fontSize" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Font Size (px)
@@ -369,7 +371,7 @@ const ProfileEdit: React.FC = () => {
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white"
               />
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -383,7 +385,7 @@ const ProfileEdit: React.FC = () => {
                 Receive email notifications
               </label>
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -398,7 +400,7 @@ const ProfileEdit: React.FC = () => {
               </label>
             </div>
           </div>
-          
+
           <div className="flex justify-end space-x-3 pt-4">
             <Button variant="outline" type="button" onClick={handleCancel}>
               Cancel

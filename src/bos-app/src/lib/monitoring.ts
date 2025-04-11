@@ -1,3 +1,5 @@
+"use client";
+
 // Monitoring and error tracking system
 
 // Initialize error tracking
@@ -30,7 +32,7 @@ export const initErrorTracking = () => {
     return function(...args: any[]) {
       // Log to original console.error
       originalConsoleError.apply(console, args);
-      
+
       // Capture React errors
       if (args[0] && typeof args[0] === 'string' && args[0].includes('React')) {
         captureError({
@@ -74,7 +76,7 @@ export const captureError = (errorData: ErrorData) => {
 
   // In production, send to error tracking service
   sendToErrorTrackingService(enhancedErrorData);
-  
+
   // Track in Google Analytics
   if (typeof window.gtag === 'function') {
     window.gtag('event', 'error', {
@@ -90,9 +92,9 @@ const sendToErrorTrackingService = (errorData: ErrorData & { timestamp: string; 
   // This would normally send to a service like Sentry, LogRocket, etc.
   // For now, we'll just log to console
   const endpoint = process.env.NEXT_PUBLIC_ERROR_TRACKING_ENDPOINT;
-  
+
   if (!endpoint) return;
-  
+
   // Send error data to endpoint
   fetch(endpoint, {
     method: 'POST',
@@ -111,7 +113,7 @@ const sendToErrorTrackingService = (errorData: ErrorData & { timestamp: string; 
 // Performance monitoring
 export const measurePerformance = (metricName: string, startTime: number) => {
   const duration = performance.now() - startTime;
-  
+
   // Log performance metric
   if (typeof window.gtag === 'function') {
     window.gtag('event', 'performance', {
@@ -120,12 +122,12 @@ export const measurePerformance = (metricName: string, startTime: number) => {
       value: Math.round(duration),
     });
   }
-  
+
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
     console.log(`Performance: ${metricName} - ${Math.round(duration)}ms`);
   }
-  
+
   return duration;
 };
 

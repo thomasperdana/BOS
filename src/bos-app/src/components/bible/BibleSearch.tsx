@@ -1,44 +1,46 @@
+"use client";
+
 import React, { useState } from 'react';
 import { useBible } from '../../context/BibleContext';
 import Button from '../ui/Button';
 
 const BibleSearch: React.FC = () => {
-  const { 
-    searchTerm, 
-    setSearchTerm, 
-    searchResults, 
-    performSearch, 
+  const {
+    searchTerm,
+    setSearchTerm,
+    searchResults,
+    performSearch,
     setCurrentReference,
     isDarkMode
   } = useBible();
-  
+
   const [searchOptions, setSearchOptions] = useState({
     caseSensitive: false,
     wholeWord: false
   });
-  
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     performSearch();
   };
-  
+
   const handleOptionChange = (option: 'caseSensitive' | 'wholeWord') => {
     setSearchOptions(prev => ({
       ...prev,
       [option]: !prev[option]
     }));
   };
-  
+
   const handleResultClick = (book: string, chapter: number) => {
     setCurrentReference(book, chapter);
   };
-  
+
   return (
     <div className={`bible-search p-4 rounded-lg ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}>
       <h2 className={`text-xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
         Search the Bible
       </h2>
-      
+
       <form onSubmit={handleSearch} className="mb-6">
         <div className="flex flex-col sm:flex-row gap-2 mb-4">
           <input
@@ -47,8 +49,8 @@ const BibleSearch: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Enter search term..."
             className={`flex-grow p-2 border rounded ${
-              isDarkMode 
-                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+              isDarkMode
+                ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
                 : 'bg-white border-gray-300 text-gray-900'
             }`}
             required
@@ -57,7 +59,7 @@ const BibleSearch: React.FC = () => {
             Search
           </Button>
         </div>
-        
+
         <div className="flex gap-4">
           <label className="flex items-center">
             <input
@@ -79,7 +81,7 @@ const BibleSearch: React.FC = () => {
           </label>
         </div>
       </form>
-      
+
       {searchResults.length > 0 ? (
         <div>
           <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -87,11 +89,11 @@ const BibleSearch: React.FC = () => {
           </h3>
           <div className={`max-h-96 overflow-y-auto p-2 rounded ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
             {searchResults.map((result, index) => (
-              <div 
+              <div
                 key={`${result.book}-${result.chapter}-${result.verse}`}
                 className={`p-3 mb-2 rounded cursor-pointer ${
-                  isDarkMode 
-                    ? 'bg-gray-800 hover:bg-gray-700' 
+                  isDarkMode
+                    ? 'bg-gray-800 hover:bg-gray-700'
                     : 'bg-white hover:bg-gray-100 shadow-sm'
                 }`}
                 onClick={() => handleResultClick(result.book, result.chapter)}

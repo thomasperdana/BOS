@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import BibleVerse from './BibleVerse';
 import { useBible } from '../../context/BibleContext';

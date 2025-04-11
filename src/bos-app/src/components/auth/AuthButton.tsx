@@ -1,24 +1,29 @@
+"use client";
+
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../ui/Button';
 
 const AuthButton: React.FC = () => {
-  const { user, isAuthenticated, isLoading, error, signIn, signOut } = useAuth();
+  const { user, isLoading, error, signIn, signOut } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
-  
+  const router = useRouter();
+
   const handleSignIn = async () => {
     await signIn();
   };
-  
+
   const handleSignOut = async () => {
     await signOut();
     setShowDropdown(false);
+    router.push('/login');
   };
-  
+
   const toggleDropdown = () => {
     setShowDropdown(prev => !prev);
   };
-  
+
   if (isLoading) {
     return (
       <Button variant="outline" disabled>
@@ -26,8 +31,8 @@ const AuthButton: React.FC = () => {
       </Button>
     );
   }
-  
-  if (isAuthenticated && user) {
+
+  if (user) {
     return (
       <div className="relative">
         <button
@@ -47,7 +52,7 @@ const AuthButton: React.FC = () => {
           )}
           <span className="hidden md:inline dark:text-white">{user.name}</span>
         </button>
-        
+
         {showDropdown && (
           <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 py-1">
             <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
@@ -67,7 +72,7 @@ const AuthButton: React.FC = () => {
       </div>
     );
   }
-  
+
   return (
     <Button variant="primary" onClick={handleSignIn}>
       Sign In

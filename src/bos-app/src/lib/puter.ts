@@ -1,4 +1,5 @@
-import puter from 'puter';
+"use client";
+
 import { env } from './env';
 
 /**
@@ -6,13 +7,46 @@ import { env } from './env';
  * Provides functions for authentication, cloud storage, and AI services
  */
 
+// Declare global puter object
+declare global {
+  interface Window {
+    puter: any;
+  }
+}
+
 // Initialize Puter with app ID
-const initPuter = () => {
+const initPuter = async (): Promise<boolean> => {
   try {
-    puter.init({
-      appId: env.puterAppId || 'bos-app',
-    });
-    return true;
+    // Check if puter is already initialized
+    if (typeof window !== 'undefined' && window.puter) {
+      return true;
+    }
+
+    // If not initialized, load the script
+    if (typeof window !== 'undefined' && !document.getElementById('puter-js-script')) {
+      const script = document.createElement('script');
+      script.id = 'puter-js-script';
+      script.src = 'https://js.puter.com/v2/';
+      script.async = true;
+      document.head.appendChild(script);
+
+      // Return a promise that resolves when the script is loaded
+      return new Promise<boolean>((resolve) => {
+        script.onload = () => {
+          // Initialize with app ID if needed
+          if (env.puterAppId) {
+            window.puter.appID = env.puterAppId;
+          }
+          resolve(true);
+        };
+        script.onerror = () => {
+          console.error('Failed to load Puter.js script');
+          resolve(false);
+        };
+      });
+    }
+
+    return false;
   } catch (error) {
     console.error('Failed to initialize Puter:', error);
     return false;
@@ -27,9 +61,12 @@ export const auth = {
    */
   signIn: async () => {
     try {
-      initPuter();
-      const user = await puter.auth.signIn();
-      return user;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        const user = await window.puter.auth.signIn();
+        return user;
+      }
+      return null;
     } catch (error) {
       console.error('Sign in failed:', error);
       return null;
@@ -42,9 +79,12 @@ export const auth = {
    */
   signOut: async () => {
     try {
-      initPuter();
-      await puter.auth.signOut();
-      return true;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        await window.puter.auth.signOut();
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error('Sign out failed:', error);
       return false;
@@ -55,10 +95,13 @@ export const auth = {
    * Get current user info
    * @returns User info or null if not signed in
    */
-  getCurrentUser: () => {
+  getCurrentUser: async () => {
     try {
-      initPuter();
-      return puter.auth.currentUser;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        return window.puter.auth.getUser();
+      }
+      return null;
     } catch (error) {
       console.error('Failed to get current user:', error);
       return null;
@@ -69,10 +112,13 @@ export const auth = {
    * Check if user is signed in
    * @returns Boolean indicating if user is signed in
    */
-  isSignedIn: () => {
+  isSignedIn: async () => {
     try {
-      initPuter();
-      return puter.auth.isSignedIn();
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        return window.puter.auth.isSignedIn();
+      }
+      return false;
     } catch (error) {
       console.error('Failed to check sign in status:', error);
       return false;
@@ -90,9 +136,12 @@ export const storage = {
    */
   saveData: async (key: string, data: any) => {
     try {
-      initPuter();
-      await puter.kv.set(key, JSON.stringify(data));
-      return true;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        await window.puter.kv.set(key, JSON.stringify(data));
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error(`Failed to save data for key ${key}:`, error);
       return false;
@@ -106,9 +155,12 @@ export const storage = {
    */
   loadData: async (key: string) => {
     try {
-      initPuter();
-      const data = await puter.kv.get(key);
-      return data ? JSON.parse(data) : null;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        const data = await window.puter.kv.get(key);
+        return data ? JSON.parse(data) : null;
+      }
+      return null;
     } catch (error) {
       console.error(`Failed to load data for key ${key}:`, error);
       return null;
@@ -122,9 +174,12 @@ export const storage = {
    */
   deleteData: async (key: string) => {
     try {
-      initPuter();
-      await puter.kv.delete(key);
-      return true;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        await window.puter.kv.del(key);
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error(`Failed to delete data for key ${key}:`, error);
       return false;
@@ -137,9 +192,12 @@ export const storage = {
    */
   listKeys: async () => {
     try {
-      initPuter();
-      const keys = await puter.kv.keys();
-      return keys;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        const keys = await window.puter.kv.list();
+        return keys;
+      }
+      return [];
     } catch (error) {
       console.error('Failed to list keys:', error);
       return [];
@@ -150,24 +208,24 @@ export const storage = {
 // AI services
 export const ai = {
   /**
-   * Generate text using GPT-4
-   * @param prompt The prompt to send to GPT-4
+   * Generate text using AI models
+   * @param prompt The prompt to send to the AI model
    * @param options Additional options
    * @returns Promise resolving to generated text or null if failed
    */
   generateText: async (prompt: string, options: { maxTokens?: number; temperature?: number } = {}) => {
     try {
-      initPuter();
-      const { maxTokens = 500, temperature = 0.7 } = options;
-      
-      const response = await puter.ai.generateText({
-        model: 'gpt-4',
-        prompt,
-        maxTokens,
-        temperature,
-      });
-      
-      return response.text;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        const { maxTokens = 500, temperature = 0.7 } = options;
+
+        const response = await window.puter.ai.chat(prompt, {
+          temperature,
+        });
+
+        return response;
+      }
+      return null;
     } catch (error) {
       console.error('Failed to generate text:', error);
       return null;
@@ -175,24 +233,21 @@ export const ai = {
   },
 
   /**
-   * Generate image using DALL-E
-   * @param prompt The prompt to send to DALL-E
+   * Generate image using AI models
+   * @param prompt The prompt to send to the image generation model
    * @param options Additional options
    * @returns Promise resolving to image URL or null if failed
    */
   generateImage: async (prompt: string, options: { size?: string; quality?: string } = {}) => {
     try {
-      initPuter();
-      const { size = '1024x1024', quality = 'standard' } = options;
-      
-      const response = await puter.ai.generateImage({
-        model: 'dall-e-3',
-        prompt,
-        size,
-        quality,
-      });
-      
-      return response.url;
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        const { size = '1024x1024', quality = 'standard' } = options;
+
+        const response = await window.puter.ai.txt2img(prompt);
+        return response;
+      }
+      return null;
     } catch (error) {
       console.error('Failed to generate image:', error);
       return null;
@@ -206,53 +261,59 @@ export const ai = {
    */
   verifyBiblicalContent: async (content: string) => {
     try {
-      initPuter();
-      
-      // Use GPT-4 to verify the content against the King James Bible
-      const prompt = `
-        You are a biblical accuracy verification system. Your task is to verify if the following content 
-        is accurate according to the King James Version of the Bible.
-        
-        Content to verify:
-        "${content}"
-        
-        Please analyze this content and provide:
-        1. A verification score from 0-100 (where 100 is completely accurate)
-        2. Any inaccuracies or misrepresentations found
-        3. The correct information from the King James Bible
-        4. Bible verses that support or contradict the content
-        
-        Format your response as a JSON object with the following structure:
-        {
-          "score": number,
-          "accurate": boolean,
-          "inaccuracies": string[],
-          "corrections": string[],
-          "supportingVerses": string[],
-          "contradictingVerses": string[]
+      await initPuter();
+      if (typeof window !== 'undefined' && window.puter) {
+        // Use AI to verify the content against the King James Bible
+        const prompt = `
+          You are a biblical accuracy verification system. Your task is to verify if the following content
+          is accurate according to the King James Version of the Bible.
+
+          Content to verify:
+          "${content}"
+
+          Please analyze this content and provide:
+          1. A verification score from 0-100 (where 100 is completely accurate)
+          2. Any inaccuracies or misrepresentations found
+          3. The correct information from the King James Bible
+          4. Bible verses that support or contradict the content
+
+          Format your response as a JSON object with the following structure:
+          {
+            "score": number,
+            "accurate": boolean,
+            "inaccuracies": string[],
+            "corrections": string[],
+            "supportingVerses": string[],
+            "contradictingVerses": string[]
+          }
+        `;
+
+        const response = await window.puter.ai.chat(prompt, {
+          temperature: 0.2,
+        });
+
+        try {
+          return JSON.parse(response);
+        } catch (e) {
+          console.error('Failed to parse verification result:', e);
+          return {
+            score: 0,
+            accurate: false,
+            inaccuracies: ['Failed to parse verification result'],
+            corrections: [],
+            supportingVerses: [],
+            contradictingVerses: [],
+          };
         }
-      `;
-      
-      const response = await puter.ai.generateText({
-        model: 'gpt-4',
-        prompt,
-        maxTokens: 1000,
-        temperature: 0.2,
-      });
-      
-      try {
-        return JSON.parse(response.text);
-      } catch (e) {
-        console.error('Failed to parse verification result:', e);
-        return {
-          score: 0,
-          accurate: false,
-          inaccuracies: ['Failed to parse verification result'],
-          corrections: [],
-          supportingVerses: [],
-          contradictingVerses: [],
-        };
       }
+      return {
+        score: 0,
+        accurate: false,
+        inaccuracies: ['Puter.js not initialized'],
+        corrections: [],
+        supportingVerses: [],
+        contradictingVerses: [],
+      };
     } catch (error) {
       console.error('Failed to verify content:', error);
       return {

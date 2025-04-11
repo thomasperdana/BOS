@@ -1,10 +1,12 @@
+"use client";
+
 // Google Analytics implementation
 export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || '';
 
 // Log page view
 export const pageview = (url: string) => {
   if (!GA_TRACKING_ID) return;
-  
+
   window.gtag('config', GA_TRACKING_ID, {
     page_path: url,
   });
@@ -31,7 +33,7 @@ export const event = ({ action, category, label, value }: EventProps) => {
 // User tracking
 export const identifyUser = (userId: string, userProperties: Record<string, any> = {}) => {
   if (!GA_TRACKING_ID || !userId) return;
-  
+
   window.gtag('set', 'user_properties', {
     user_id: userId,
     ...userProperties,
@@ -45,7 +47,7 @@ export const trackFeatureUsage = (featureName: string, metadata: Record<string, 
     category: 'Feature Usage',
     label: featureName,
   });
-  
+
   // Log additional metadata if provided
   if (Object.keys(metadata).length > 0) {
     window.gtag('event', 'feature_metadata', {
@@ -72,7 +74,7 @@ export const trackAIFeatureUsage = (featureType: string, promptLength: number, r
     category: 'AI Usage',
     label: featureType,
   });
-  
+
   window.gtag('event', 'ai_feature_metadata', {
     feature_type: featureType,
     prompt_length: promptLength,
@@ -87,7 +89,7 @@ export const trackCommunityInteraction = (interactionType: string, contentId?: s
     category: 'Community',
     label: interactionType,
   });
-  
+
   if (contentId) {
     window.gtag('event', 'community_content_interaction', {
       interaction_type: interactionType,
@@ -103,7 +105,7 @@ export const trackError = (errorType: string, errorMessage: string, errorStack?:
     category: 'Error',
     label: errorType,
   });
-  
+
   window.gtag('event', 'error_details', {
     error_type: errorType,
     error_message: errorMessage,

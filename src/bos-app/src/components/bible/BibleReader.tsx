@@ -1,88 +1,91 @@
+"use client";
+
 import React, { useState } from 'react';
 import { useBible } from '../../context/BibleContext';
 import BibleChapter from './BibleChapter';
 import Button from '../ui/Button';
 
 const BibleReader: React.FC = () => {
-  const { 
-    books, 
-    currentBook, 
-    currentChapter, 
-    chapterData, 
-    isLoading, 
-    error, 
+  const {
+    books,
+    currentBook,
+    currentChapter,
+    chapterData,
+    isLoading,
+    error,
     setCurrentReference,
     fontSize,
     increaseFontSize,
     decreaseFontSize,
     isDarkMode,
+    getChapterCount,
     toggleDarkMode
   } = useBible();
-  
+
   const [showBookSelector, setShowBookSelector] = useState(false);
   const [showChapterSelector, setShowChapterSelector] = useState(false);
-  
+
   // Group books by testament
   const oldTestament = books.slice(0, 39);
   const newTestament = books.slice(39);
-  
+
   const handleBookSelect = (bookName: string) => {
     setCurrentReference(bookName, 1);
     setShowBookSelector(false);
     setShowChapterSelector(true);
   };
-  
+
   const handleChapterSelect = (chapter: number) => {
     setCurrentReference(currentBook, chapter);
     setShowChapterSelector(false);
   };
-  
+
   // Generate array of chapter numbers for the current book
   const chapterNumbers = Array.from(
-    { length: books.find(b => b.name === currentBook)?.chapters?.length || 0 },
+    { length: getChapterCount(currentBook) },
     (_, i) => i + 1
   );
-  
+
   return (
     <div className={`bible-reader p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
       <div className="flex justify-between items-center mb-6">
         <div className="flex gap-2">
-          <Button 
-            variant="secondary" 
-            size="sm" 
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setShowBookSelector(prev => !prev)}
           >
             {currentBook}
           </Button>
-          <Button 
-            variant="secondary" 
-            size="sm" 
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setShowChapterSelector(prev => !prev)}
           >
             Chapter {currentChapter}
           </Button>
         </div>
-        
+
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={decreaseFontSize}
             aria-label="Decrease font size"
           >
             A-
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={increaseFontSize}
             aria-label="Increase font size"
           >
             A+
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={toggleDarkMode}
             aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
@@ -98,7 +101,7 @@ const BibleReader: React.FC = () => {
           </Button>
         </div>
       </div>
-      
+
       {/* Book selector dropdown */}
       {showBookSelector && (
         <div className={`book-selector mb-6 p-4 rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
@@ -111,8 +114,8 @@ const BibleReader: React.FC = () => {
                     key={book.abbrev}
                     onClick={() => handleBookSelect(book.name)}
                     className={`p-2 text-sm text-left rounded hover:bg-blue-100 ${
-                      currentBook === book.name 
-                        ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                      currentBook === book.name
+                        ? 'bg-blue-500 text-white hover:bg-blue-600'
                         : isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-800'
                     }`}
                   >
@@ -129,8 +132,8 @@ const BibleReader: React.FC = () => {
                     key={book.abbrev}
                     onClick={() => handleBookSelect(book.name)}
                     className={`p-2 text-sm text-left rounded hover:bg-blue-100 ${
-                      currentBook === book.name 
-                        ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                      currentBook === book.name
+                        ? 'bg-blue-500 text-white hover:bg-blue-600'
                         : isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-800'
                     }`}
                   >
@@ -142,7 +145,7 @@ const BibleReader: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {/* Chapter selector dropdown */}
       {showChapterSelector && (
         <div className={`chapter-selector mb-6 p-4 rounded-lg shadow-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
@@ -155,8 +158,8 @@ const BibleReader: React.FC = () => {
                 key={chapter}
                 onClick={() => handleChapterSelect(chapter)}
                 className={`p-2 text-center rounded ${
-                  currentChapter === chapter 
-                    ? 'bg-blue-500 text-white' 
+                  currentChapter === chapter
+                    ? 'bg-blue-500 text-white'
                     : isDarkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-100 hover:bg-gray-200'
                 }`}
               >
@@ -166,7 +169,7 @@ const BibleReader: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {/* Bible content */}
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
@@ -177,10 +180,10 @@ const BibleReader: React.FC = () => {
           <p>{error}</p>
         </div>
       ) : chapterData ? (
-        <BibleChapter 
-          book={chapterData.book} 
-          chapter={chapterData.chapter} 
-          verses={chapterData.verses} 
+        <BibleChapter
+          book={chapterData.book}
+          chapter={chapterData.chapter}
+          verses={chapterData.verses}
         />
       ) : (
         <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">

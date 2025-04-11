@@ -46,7 +46,7 @@ export interface StudyGroup {
     timezone: string;
   };
   currentStudy?: {
-    book: string;
+    book?: string;
     chapter?: number;
     theme?: string;
   };

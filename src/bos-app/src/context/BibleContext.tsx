@@ -1,13 +1,17 @@
+"use client";
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { 
-  BibleBook, 
-  BibleChapter, 
-  BibleVerse, 
-  getAllBooks, 
-  getChapter, 
-  getNextChapter, 
+import {
+  BibleBook,
+  BibleChapter,
+  BibleVerse,
+  getAllBooks,
+  getChapter,
+  getNextChapter,
   getPreviousChapter,
-  searchBible
+  searchBible,
+  getVersesByReference as getVersesByReferenceUtil,
+  getChapterCount
 } from '../lib/bible';
 
 interface BibleContextType {
@@ -32,6 +36,8 @@ interface BibleContextType {
   decreaseFontSize: () => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  getVersesByReference: (reference: string) => BibleVerse[];
+  getChapterCount: (bookName: string) => number;
 }
 
 const BibleContext = createContext<BibleContextType | undefined>(undefined);
@@ -47,23 +53,23 @@ export const BibleProvider: React.FC<BibleProviderProps> = ({ children }) => {
   const [chapterData, setChapterData] = useState<BibleChapter | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState<BibleVerse[]>([]);
-  
+
   const [bookmarks, setBookmarks] = useState<{ book: string; chapter: number; verse?: number }[]>([]);
-  
+
   const [fontSize, setFontSize] = useState(16);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  
+
   // Load chapter data when currentBook or currentChapter changes
   useEffect(() => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const data = getChapter(currentBook, currentChapter);
-      
+
       if (!data) {
         setError(`Chapter not found: ${currentBook} ${currentChapter}`);
         setChapterData(null);
@@ -77,7 +83,7 @@ export const BibleProvider: React.FC<BibleProviderProps> = ({ children }) => {
       setIsLoading(false);
     }
   }, [currentBook, currentChapter]);
-  
+
   // Load bookmarks from localStorage on initial render
   useEffect(() => {
     const savedBookmarks = localStorage.getItem('bos-bookmarks');
@@ -88,32 +94,32 @@ export const BibleProvider: React.FC<BibleProviderProps> = ({ children }) => {
         console.error('Error loading bookmarks:', err);
       }
     }
-    
+
     // Load user preferences
     const savedFontSize = localStorage.getItem('bos-font-size');
     if (savedFontSize) {
       setFontSize(parseInt(savedFontSize, 10));
     }
-    
+
     const savedDarkMode = localStorage.getItem('bos-dark-mode');
     if (savedDarkMode) {
       setIsDarkMode(savedDarkMode === 'true');
     }
   }, []);
-  
+
   // Save bookmarks to localStorage when they change
   useEffect(() => {
     localStorage.setItem('bos-bookmarks', JSON.stringify(bookmarks));
   }, [bookmarks]);
-  
+
   // Save user preferences when they change
   useEffect(() => {
     localStorage.setItem('bos-font-size', fontSize.toString());
   }, [fontSize]);
-  
+
   useEffect(() => {
     localStorage.setItem('bos-dark-mode', isDarkMode.toString());
-    
+
     // Apply dark mode to the document
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -121,71 +127,79 @@ export const BibleProvider: React.FC<BibleProviderProps> = ({ children }) => {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
-  
+
   const setCurrentReference = (book: string, chapter: number) => {
     setCurrentBook(book);
     setCurrentChapter(chapter);
   };
-  
+
   const goToNextChapter = () => {
     const next = getNextChapter(currentBook, currentChapter);
     if (next) {
       setCurrentReference(next.book, next.chapter);
     }
   };
-  
+
   const goToPreviousChapter = () => {
     const prev = getPreviousChapter(currentBook, currentChapter);
     if (prev) {
       setCurrentReference(prev.book, prev.chapter);
     }
   };
-  
+
   const performSearch = () => {
     if (!searchTerm.trim()) {
       setSearchResults([]);
       return;
     }
-    
+
     const results = searchBible(searchTerm, { limit: 50 });
     setSearchResults(results);
   };
-  
+
   const addBookmark = (book: string, chapter: number, verse?: number) => {
     const newBookmark = { book, chapter, verse };
-    
+
     // Check if bookmark already exists
-    const exists = bookmarks.some(bookmark => 
-      bookmark.book === book && 
-      bookmark.chapter === chapter && 
+    const exists = bookmarks.some(bookmark =>
+      bookmark.book === book &&
+      bookmark.chapter === chapter &&
       bookmark.verse === verse
     );
-    
+
     if (!exists) {
       setBookmarks([...bookmarks, newBookmark]);
     }
   };
-  
+
   const removeBookmark = (book: string, chapter: number, verse?: number) => {
-    setBookmarks(bookmarks.filter(bookmark => 
-      !(bookmark.book === book && 
-        bookmark.chapter === chapter && 
+    setBookmarks(bookmarks.filter(bookmark =>
+      !(bookmark.book === book &&
+        bookmark.chapter === chapter &&
         bookmark.verse === verse)
     ));
   };
-  
+
   const increaseFontSize = () => {
     setFontSize(prev => Math.min(prev + 2, 28)); // Max font size: 28px
   };
-  
+
   const decreaseFontSize = () => {
     setFontSize(prev => Math.max(prev - 2, 12)); // Min font size: 12px
   };
-  
+
   const toggleDarkMode = () => {
     setIsDarkMode(prev => !prev);
   };
-  
+
+  const getVersesByReference = (reference: string) => {
+    return getVersesByReferenceUtil(reference);
+  };
+
+  const getChapterCountFunc = (bookName: string) => {
+    return getChapterCount(bookName);
+  };
+
   const value = {
     books,
     currentBook,
@@ -207,9 +221,11 @@ export const BibleProvider: React.FC<BibleProviderProps> = ({ children }) => {
     increaseFontSize,
     decreaseFontSize,
     isDarkMode,
-    toggleDarkMode
+    toggleDarkMode,
+    getVersesByReference,
+    getChapterCount: getChapterCountFunc
   };
-  
+
   return (
     <BibleContext.Provider value={value}>
       {children}
