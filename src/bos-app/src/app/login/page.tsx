@@ -31,7 +31,11 @@ export default function LoginPage() {
 
   const handleFacebookSignIn = async () => {
     try {
-      await signInWithFacebook();
+      // For now, show a message about missing credentials
+      alert("Facebook login requires valid OAuth credentials. Please set up Facebook OAuth credentials in your .env file.");
+      console.log("Facebook login requires valid OAuth credentials");
+      // Uncomment this when you have valid credentials
+      // await signInWithFacebook();
     } catch (err) {
       console.error("Facebook login failed:", err);
     }
@@ -39,7 +43,11 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithGoogle();
+      // For now, show a message about missing credentials
+      alert("Google login requires valid OAuth credentials. Please set up Google OAuth credentials in your .env file.");
+      console.log("Google login requires valid OAuth credentials");
+      // Uncomment this when you have valid credentials
+      // await signInWithGoogle();
     } catch (err) {
       console.error("Google login failed:", err);
     }
